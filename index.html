@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTS - Udah Tinggal Seruput</title>
+    <!-- Mengambil font dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === RESET & VARIABEL === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a1a1a;
+            --text-gray: #4a4a4a;
+            --bg-color: #ffffff;
+            --accent-bg: #f4f4f4;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Poppins', sans-serif;
+            --highlight-color: #4a5c48;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            overflow-x: hidden;
+        }
+
+        /* === SPLASH SCREEN (ANIMASI BARU) === */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out;
+        }
+
+        .splash-content {
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .splash-title {
+            font-family: var(--font-heading);
+            font-size: 4.5rem;
+            color: var(--highlight-color);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            overflow: hidden; /* Mencegah elemen keluar batas saat animasi */
+        }
+
+        /* Styling per huruf untuk animasi masuk satu-satu */
+        .splash-title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px) rotate(10deg);
+            /* Menggunakan cubic-bezier untuk efek elegan & sedikit memantul di akhir */
+            animation: popLetter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: var(--delay);
+        }
+
+        .splash-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            font-weight: 300;
+            text-transform: uppercase;
+            
+            /* Animasi Cinematic Blur & Spacing Expand */
+            opacity: 0;
+            letter-spacing: 0px; 
+            filter: blur(10px);
+            animation: cinematicSubtitle 1.5s ease-out forwards 1s; /* Delay 1 detik nunggu UTS selesai */
+        }
+
+        @keyframes popLetter {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotate(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotate(0);
+            }
+        }
+
+        @keyframes cinematicSubtitle {
+            0% {
+                opacity: 0;
+                letter-spacing: 0px;
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                letter-spacing: 5px;
+                filter: blur(0);
+            }
+        }
+
+        /* === MAIN CONTENT LAYOUT === */
+        #main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            width: 100%;
+        }
+
+        /* Container untuk membatasi lebar konten di tengah layar */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* === HERO SECTION BACKGROUND WRAPPER === */
+        .hero-background {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('assets/natal.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Overlay Putih Transparan + Gradasi Fade out ke Menu */
+        .hero-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.7) 70%, rgba(255, 255, 255, 1) 100%);
+            z-index: 1;
+        }
+
+        .hero-background .container {
+            z-index: 2;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER & NAVIGASI --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+        }
+
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--highlight-color);
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+            z-index: 1002;
+        }
+        
+        .logo-text span {
+            font-family: var(--font-body);
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--highlight-color);
+        }
+
+        .btn-outline {
+            text-decoration: none;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 10px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1003;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: 0.3s;
+        }
+
+        /* --- HERO TEXT SECTION --- */
+        .hero {
+            display: flex;
+            align-items: center;
+            flex-grow: 1; 
+            padding-bottom: 80px; 
+        }
+
+        .hero-text { 
+            max-width: 550px; 
+        }
+
+        .subtitle-top {
+            font-size: 11px;
+            color: var(--primary-color);
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .hero-text h1 {
+            font-family: var(--font-heading);
+            font-size: 4.5rem;
+            line-height: 1.1;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        .hero-text h1 span {
+            color: #7b8875; 
+            font-style: italic;
+        }
+
+        .hero-text p {
+            font-size: 15px;
+            color: var(--text-gray);
+            line-height: 1.8;
+            font-weight: 500;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .btn-solid {
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            transition: opacity 0.3s;
+        }
+        .btn-solid:hover { opacity: 0.8; }
+
+        .btn-text {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            position: relative;
+        }
+        .btn-text::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--primary-color);
+        }
+
+        /* --- MENU SECTION --- */
+        .menu-section {
+            padding: 80px 0 100px 0;
+            background-color: var(--bg-color);
+            position: relative;
+            z-index: 5;
+        }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .menu-header h2 {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .menu-header p {
+            color: var(--text-gray);
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        .menu-category h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--highlight-color);
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--highlight-color);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 25px;
+        }
+
+        .menu-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-desc {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-top: 4px;
+        }
+
+        .menu-dots {
+            flex-grow: 1;
+            border-bottom: 2px dotted #d1d1d1;
+            margin: 0 15px;
+            opacity: 0.6;
+        }
+
+        .menu-price {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--highlight-color);
+        }
+
+        .badge {
+            background-color: var(--highlight-color);
+            color: white;
+            font-size: 0.6rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--font-body);
+            font-weight: 400;
+        }
+
+        .badge-hot {
+            background-color: #b05a4a;
+        }
+
+        /* ========================================= */
+        /* === MEDIA QUERIES (UNTUK HP & TABLET) === */
+        /* ========================================= */
+        @media screen and (max-width: 992px) {
+            .hero-text h1 { font-size: 3.5rem; }
+            .menu-grid { grid-template-columns: 1fr; gap: 40px; } 
+        }
+
+        @media screen and (max-width: 768px) {
+            .splash-title { font-size: 3.5rem; }
+            .splash-subtitle { font-size: 0.8rem; letter-spacing: 3px; }
+            .hamburger { display: flex; }
+            
+            .nav-container {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background-color: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(5px);
+                flex-direction: column;
+                justify-content: center;
+                gap: 30px;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+                transition: right 0.4s ease;
+                z-index: 1001;
+            }
+            .nav-container.active { right: 0; }
+            nav ul { flex-direction: column; align-items: center; gap: 25px; }
+            .btn-outline { margin-top: 10px; }
+            
+            .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+            .hamburger.active span:nth-child(2) { opacity: 0; }
+            .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+            .hero { text-align: center; justify-content: center; }
+            .hero-text { padding: 0; max-width: 100%; }
+            .hero-text p { margin: 0 auto 40px auto; }
+            .hero-actions { justify-content: center; flex-direction: column; gap: 20px; }
+
+            .menu-header h2 { font-size: 2.2rem; }
+            .menu-name { font-size: 1rem; flex-wrap: wrap; }
+            .menu-price { font-size: 1rem; }
+        }
+
+        @media screen and (max-width: 480px) {
+            .hero-text h1 { font-size: 2.8rem; }
+            .splash-title { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. SPLASH SCREEN DENGAN ANIMASI BARU -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <!-- Teks dipisah per huruf dengan variable --delay -->
+            <h1 class="splash-title">
+                <span style="--delay: 0.2s">U</span><span style="--delay: 0.4s">T</span><span style="--delay: 0.6s">S</span>
+            </h1>
+            <p class="splash-subtitle">Udah Tinggal Seruput</p>
+        </div>
+    </div>
+
+    <!-- 2. MAIN CONTENT -->
+    <div id="main-content">
+        
+        <!-- WRAPPER HERO BACKGROUND -->
+        <div class="hero-background">
+            <div class="container">
+                <!-- Navigasi -->
+                <header>
+                    <div class="logo-text">
+                        UTS
+                        <span>UDAH TINGGAL SERUPUT</span>
+                    </div>
+                    
+                    <div class="nav-container" id="nav-menu">
+                        <nav>
+                            <ul>
+                                <li><a href="#" class="nav-link">BERANDA</a></li>
+                                <li><a href="#menu" class="nav-link">MENU</a></li>
+                                <li><a href="#" class="nav-link">CERITA KAMI</a></li>
+                            </ul>
+                        </nav>
+                        <a href="#menu" class="btn-outline">PESAN SEKARANG</a>
+                    </div>
+
+                    <div class="hamburger" id="hamburger-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </header>
+
+                <!-- Hero Text -->
+                <main class="hero">
+                    <div class="hero-text">
+                        <span class="subtitle-top">EKSKLUSIF & AUTENTIK</span>
+                        <h1>Seni <br> Menyeduh <br> <span>Cerita.</span></h1>
+                        <p>Lebih dari sekadar kafein, ini adalah perayaan perjalanan rasa. Nikmati kurasi biji kopi pilihan yang diproses dengan dedikasi untuk menghadirkan makna di setiap sesapan.</p>
+                        
+                        <div class="hero-actions">
+                            <a href="#menu" class="btn-solid">LIHAT MENU</a>
+                            <a href="#" class="btn-text">TELUSURI ASAL USUL</a>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Menu Section -->
+        <section id="menu" class="menu-section">
+            <div class="container">
+                <div class="menu-header">
+                    <h2>Menu Kami</h2>
+                    <p>Sederhana, memuaskan, dan pas di kantong.</p>
+                </div>
+                
+                <div class="menu-grid">
+                    <!-- Kolom Kiri: Ala Carte -->
+                    <div class="menu-category">
+                        <h3>Satuan (A La Carte)</h3>
+                        
+                        <div class="menu-item">
+                            <div class="menu-details">
+                                <span class="menu-name">Americano</span>
+                            </div>
+                            <div class="menu-dots"></div>
+                            <span class="menu-price">8K</span>
+                        </div>
+
+                        <div class="menu-item">
+                            <div class="menu-details">
+                                <span class="menu-name">Cappuccino</span>
+                            </div>
+                            <div class="menu-dots"></div>
+                            <span class="menu-price">10K</span>
+                        </div>
+
+                        <div class="menu-item">
+                            <div class="menu-details">
+                                <span class="menu-name">Donat Manis</span>
+                                <span class="menu-desc">Harga per 1 pcs</span>
+                            </div>
+                            <div class="menu-dots"></div>
+                            <span class="menu-price">4K</span>
+                        </div>
+                    </div>
+
+                    <!-- Kolom Kanan: Paket -->
+                    <div class="menu-category">
+                        <h3>Paket Ngopi</h3>
+                        
+                        <div class="menu-item">
+                            <div class="menu-details">
+                                <span class="menu-name">Paket Temen</span>
+                                <span class="menu-desc">1 Americano + 2 Donat</span>
+                            </div>
+                            <div class="menu-dots"></div>
+                            <span class="menu-price">15K</span>
+                        </div>
+
+                        <div class="menu-item">
+                            <div class="menu-details">
+                                <span class="menu-name">Paket Teman Dekat</span>
+                                <span class="menu-desc">1 Cappuccino + 2 Donat</span>
+                            </div>
+                            <div class="menu-dots"></div>
+                            <span class="menu-price">17K</span>
+                        </div>
+
+                        <!-- Rekomendasi 1 -->
+                        <div class="menu-item">
+                            <div class="menu-details">
+                                <span class="menu-name">Paket Berdua <span class="badge">Rekomendasi</span></span>
+                                <span class="menu-desc">1 Americano + 1 Cappuccino + 2 Donat</span>
+                            </div>
+                            <div class="menu-dots"></div>
+                            <span class="menu-price">24K</span>
+                        </div>
+
+                        <!-- Rekomendasi 2 -->
+                        <div class="menu-item">
+                            <div class="menu-details">
+                                <span class="menu-name">Paket Ramean <span class="badge badge-hot">Best Seller</span></span>
+                                <span class="menu-desc">2 Americano + 2 Cappuccino + 4 Donat</span>
+                            </div>
+                            <div class="menu-dots"></div>
+                            <span class="menu-price">48K</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Animasi Splash Screen
+            const splashScreen = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            // Durasi diperpanjang ke 3.2 detik agar user sempat menikmati animasi baru
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        mainContent.style.opacity = '1';
+                    }, 50);
+
+                }, 800); 
+            }, 3200); 
+
+            // Hamburger Menu Mobile
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const navMenu = document.getElementById('nav-menu');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            hamburgerBtn.addEventListener('click', () => {
+                hamburgerBtn.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            // Tutup menu mobile jika salah satu link diklik
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburgerBtn.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
